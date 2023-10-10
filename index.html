@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherAPP@utkarsh</title>
+  <link rel="website icon" type="png" href="images/webicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <!-- Your CSS styles here -->
+  <style>
+    @import url('https://fonts.googleapis.com/css?family=Montserrat:400,700,900&display=swap');
+
+    :root {
+      --gradient: linear-gradient(135deg, #72EDF2 10%, #5151E5 100%);
+    }
+
+    .clear {
+      clear: both;
+    }
+
+    nav {
+      margin-bottom: 15vh;
+    }
+
+    body {
+      position: absolute;
+      margin: 0;
+      width: 100%;
+      height: 100vh;
+      font-family: 'Montserrat', sans-serif;
+      background-color: #343d4b;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 25px;
+      box-shadow: 0 0 70px -10px rgba(0, 0, 0, 0.2);
+      background-color: #222831;
+      color: #ffffff;
+      height: 400px;
+    }
+
+    .weather-side {
+      position: relative;
+      display: none;
+      height: 100%;
+      border-radius: 25px;
+      /* background-image: url("https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80"); */
+      background-size: cover;
+      background-image: url("https://images.unsplash.com/photo-1559963110-71b394e7494d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=675&q=80");
+      width: 300px;
+      transition: transform 300ms ease;
+      transition: transform 300ms ease, -webkit-transform 300ms ease;
+      transform: translateZ(0) scale(1.02) perspective(1000px);
+      float: left;
+    }
+
+    .weather-side:hover {
+      transform: scale(1.1) perspective(1500px) rotateY(10deg);
+    }
+
+    .info {
+      display: none;
+    }
+
+    .date-container {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      top: 25px;
+      left: 25px;
+    }
+
+    .date-dayname {
+      margin: 0;
+    }
+
+    .date-day {
+      display: block;
+    }
+
+    .location {
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    #location-icon {
+      padding-bottom: 2px;
+      margin-right: 5px;
+    }
+
+    .weather-container {
+      position: absolute;
+      bottom: 25px;
+      left: 25px;
+    }
+
+    .weather-icon {
+      height: 6rem;
+      width: auto;
+    }
+
+    .weather-temp {
+      margin: 0;
+      font-weight: 700;
+      font-size: 4em;
+    }
+
+    .weather-desc {
+      margin: 0;
+    }
+
+    .info img {
+      padding-left: 5px;
+    }
+
+    .info-side {
+      position: relative;
+      width: 330px;
+      float: left;
+      height: 100%;
+      padding-top: 25px;
+    }
+
+    .today-info {
+      padding: 15px;
+      margin: 0 25px 25px 25px;
+      border-radius: 10px;
+    }
+
+    .today-info>div:not(:last-child) {
+      margin: 0 0 10px 0;
+    }
+
+    .today-info>div .title {
+      float: left;
+      font-weight: 700;
+    }
+
+    .today-info>div .value {
+      float: right;
+    }
+
+    .temps-list {
+      display: flex;
+      list-style-type: none;
+      padding: 0;
+      margin: 10px 35px;
+      box-shadow: 0 0 50px -5px rgba(0, 0, 0, 0.25);
+      border-radius: 10px;
+
+    }
+
+    .temps-list>li {
+      float: left;
+      padding: 15px;
+      cursor: pointer;
+      transition: 200ms ease;
+      border-radius: 10px;
+    }
+
+    .temps-list>li:hover {
+      transform: scale(1.1);
+      background: #fff;
+      color: #222831;
+      -webkit-box-shadow: 0 0 40px -5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 40px -5px rgba(0, 0, 0, 0.2)
+    }
+
+    .temps-list>li.active {
+      background: #fff;
+      color: #222831;
+      border-radius: 10px;
+      margin-right: 1rem;
+    }
+
+    .temps-list>li .temp-type {
+      display: block;
+      margin: 10px 0 0 0;
+      text-align: center;
+    }
+
+    .temps-list>li .temp-type-value {
+      display: block;
+      text-align: center;
+      margin: 10px 0 0 0;
+      font-weight: 700;
+    }
+
+    .location-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px 35px;
+    }
+
+    .location-button {
+      outline: none;
+      width: 100%;
+      border: none;
+      border-radius: 25px;
+      padding: 10px;
+      font-family: 'Montserrat', sans-serif;
+      background-image: var(--gradient);
+      color: #ffffff;
+      font-weight: 700;
+      box-shadow: 0 0 30px -5px rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      transition: transform 200ms ease;
+    }
+
+    .location-button:hover {
+      transform: scale(0.95);
+    }
+
+    .location-search {
+      height: 2rem;
+      margin-bottom: 5%;
+      border-radius: 1rem;
+      background-color: #343D4B;
+      color: #ffffff;
+      padding: 0 1rem;
+    }
+
+    .error {
+      margin: 0.3rem;
+      font-size: 14px;
+      display: none;
+    }
+
+    @media screen and (max-width: 532px){
+      .container{
+        height: 830px;
+        flex-direction: column;
+      }
+      }
+
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Weather App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Utkarsh kr. gupta <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Contacts
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Github</a>
+            <a class="dropdown-item" href="#">Linkdin</a>
+            <a class="dropdown-item" href="#">Instagram</a>
+          </div>
+        </li>
+      </ul>
+      <div class="form-inline my-2 my-lg-0">
+        <span class="form-control mr-sm-2" aria-label="Search">Using HTML , CSS AND JS</span>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="weather-side">
+      <div class="date-container">
+        <h2 class="date-dayname" id="day"></h2>
+        <span class="date-day" id="date"></span>
+        <span><img id="location-icon" src="images/location.png" width="12" alt=""> <span class="location"></span></span>
+      </div>
+      <div class="weather-container">
+        <img src="" class="weather-icon" ></img>
+        <h1 class="weather-temp" id="temp"></h1>
+        <h3 class="weather-desc"></h3>
+      </div>
+    </div>
+    <div class="info-side">
+      <div class="info">
+        <div class="today-info-container">
+          <div class="today-info">
+            <div class="humidity">
+              <span class="title">HUMIDITY</span>
+              <span class="value" id="humidity_value"></span>
+              <img width="15" src="images/humidity.png" alt="">
+              <div class="clear"></div>
+            </div>
+            <div class="wind">
+              <span class="title">WIND</span>
+              <span class="value" id="wind_value"></span>
+              <img width="15" src="images/wind.png" alt="">
+              <div class="clear"></div>
+            </div>
+          </div>
+        </div>
+        <div class="temps-container">
+          <ul class="temps-list">
+            <li>
+              <span class="temp-type">feels like</span>
+              <span class="temp-type-value" id="feeltemp"></span>
+            </li>
+            <li>
+              <span class="temp-type">min</span>
+              <span class="temp-type-value" id="mintemp"></span>
+            </li>
+            <li>
+              <span class="temp-type">max</span>
+              <span class="temp-type-value" id="maxtemp"></span>
+            </li>
+            <div class="clear"></div>
+        </div>
+        </ul>
+      </div>
+      <div class="location-container">
+        <input type="text" spellcheck="false" placeholder="enter city" class="location-search">
+        <button id="change-location-button" class="location-button"> <span>Change
+            location</span></button>
+        <div class="error">Invalid city</div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script>
+    const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const monthname = ["Jan", "Feb", "March", "April", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const d = new Date();
+    let time =d.getHours();
+    if (time>=18 || time<=5){
+      document.querySelector(".weather-side").style.backgroundImage="url('https://images.unsplash.com/photo-1489549132488-d00b7eee80f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80')"
+    }
+    let day = weekday[d.getDay()];
+    let month = monthname[d.getMonth()];
+    let year = d.getFullYear();
+    let date = d.getDate();
+    let fulldate = `${date} ${month}, ${year}`
+
+
+    setInterval(() => {
+      document.querySelector("#day").innerHTML = day;
+      document.querySelector("#date").innerHTML = fulldate;
+    }, 1000);
+  </script>
+  <script>
+
+    const apiKey = "5f5abe8536e497726601aa22196f0779";
+    const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+    const cityBox = document.querySelector(".location-search")
+    const cityButton = document.querySelector(".location-button")
+    const icon = document.querySelector(".weather-icon")
+
+
+
+    async function checkWeather(location) {
+      const response = await fetch(apiUrl + location + `&appid=${apiKey}`);
+
+      if (response.status == 404) {
+        document.querySelector(".error").style.display = "block"
+        document.querySelector(".info").style.display = "none"
+        document.querySelector(".weather-side").style.display = "none"
+      }
+      else {
+        var data = await response.json();
+
+        console.log(data)
+
+        document.querySelector(".location").innerHTML = data.name + "," + data.sys.country;
+        document.querySelector("#feeltemp").innerHTML = Math.round(data.main.feels_like) + "°C";
+        document.querySelector("#mintemp").innerHTML = Math.round(data.main.temp_min) + "°C";
+        document.querySelector("#maxtemp").innerHTML = Math.round(data.main.temp_max) + "°C";
+        document.querySelector("#temp").innerHTML = Math.round(data.main.temp) + "°C";
+        document.querySelector("#humidity_value").innerHTML = data.main.humidity + "%";
+        document.querySelector("#wind_value").innerHTML = data.wind.speed + "km/h";
+         document.querySelector(".weather-desc").innerHTML = data.weather[0].description;
+
+        if (data.weather[0].main == "Clouds") {
+          icon.src = "images/clouds.png";
+        }
+        else if (data.weather[0].main == "Clear") {
+          icon.src = "images/clear.png";
+          if (time>=18 || time<=5){
+            icon.src="images/iconnight.png"
+          }
+        }
+        else if (data.weather[0].main == "Mist") {
+          icon.src = "images/mist.png";
+        }
+        else if (data.weather[0].main == "Rain") {
+          icon.src = "images/rain.png";
+        }
+        else if (data.weather[0].main == "Snow") {
+          icon.src = "images/snow.png";
+        }
+        else if (data.weather[0].main == "Drizzle") {
+          icon.src = "images/drizzle.png";
+        }
+        else if (data.weather[0].main == "Clouds") {
+          icon.src = "images/Clouds.png";
+        }
+        else if (data.weather[0].main == "Haze") {
+          icon.src = "images/clear.png";
+          if (time>=18 || time<=5){
+            icon.src="images/iconnight.png"
+          }
+        }
+
+        document.querySelector(".weather-side").style.display = "block"
+        document.querySelector(".info").style.display = "block"
+        document.querySelector(".error").style.display = "none"
+      }
+
+    }
+
+    cityButton.addEventListener("click", () => {
+      checkWeather(cityBox.value);
+    })
+
+  </script>
+</body>
+
+</html>
